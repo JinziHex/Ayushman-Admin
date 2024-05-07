@@ -15,7 +15,8 @@
                      </div>
                      <div class="user-wrap">
                         <h4><strong>{{ $show->staff_name}}</strong></h4>
-                        <h6 class="text-muted mb-3">Member Since: {{$show->last_login_time}}</h6>
+                        <h6 class="text-muted mb-3">Member Since: {{ $show->created_at->format('Y-m-d') }}</h6>
+
                         @if($show->is_active == 0)
                         <span class="badge badge-danger">Inactive</span>
                         @else
@@ -24,16 +25,7 @@
                      </div>
                   </div>
                </div>
-               <div class="col-lg-6 col-md-12">
-                  <div class="wideget-user-info">
-                     <div class="wideget-user-icons">
-                        <a href="#" class="bg-facebook text-white mt-0"><i class="fa fa-facebook"></i></a>
-                        <a href="#" class="bg-info text-white"><i class="fa fa-twitter"></i></a>
-                        <a href="#" class="bg-google text-white"><i class="fa fa-google"></i></a>
-                        <a href="#" class="bg-dribbble text-white"><i class="fa fa-dribbble"></i></a>
-                     </div>
-                  </div>
-               </div>
+       
             </div>
          </div>
       </div>
@@ -42,8 +34,8 @@
             <div class="tab-menu-heading">
                <div class="tabs-menu1">
                   <ul class="nav">
-                     <li class=""><a href="#tab-51" class="active show" data-toggle="tab">Basic Details</a></li>
-                     <li><a href="#tab-61" data-toggle="tab" class="">Qualification</a></li>
+                     <li class=""><a href="#tab-51" class="active show" data-toggle="tab">Personal Details</a></li>
+                     <li><a href="#tab-61" data-toggle="tab" class="">Available Leaves</a></li>
                      <li><a href="#tab-71" data-toggle="tab" class="">Salary Details</a></li>
                   </ul>
                </div>
@@ -98,14 +90,6 @@
                               <tr>
                                  <td><strong>Staff Address:</strong>{{ $show->staff_address ??''}}</td>
                               </tr>
-                          
-                              <tr>
-                                 <td><strong>Staff Salary Type:</strong> {{ $show->salaryType->salary_type ?? '' }}</td>
-                             </tr>
-                             
-                              <tr>
-                                 <td><strong>Salary Amount:</strong>{{ $show->salary_amount ??''}}</td>
-                              </tr>
                               <tr>
                                  <td><strong>Qualification :</strong>  {{ $show->staff_qualification ??''}}</td>
                               </tr>
@@ -132,9 +116,7 @@
                                  <td><strong>Booking Fee :</strong> {{ $show->staff_booking_fee }}</td>
                               </tr>
                               @endif
-                              <tr>
-                                 <td><strong>Last Login Time :</strong>{{ $show->last_login_time}}</td>
-                              </tr>
+
                            </tbody>
                         </table>
                      </div>
@@ -143,14 +125,22 @@
                </div>
                <div class="tab-pane" id="tab-61">
                   <div class="media-heading">
-                     <h5><strong>Staff Qualification</strong></h5>
+                     <h5><strong>Staff Available Leave</strong></h5>
                   </div>
                   <ul class="widget-users row">
                      <li class="col-lg-4  col-md-6 col-sm-12 col-12">
                         <div class="card">
-                           <div class="card-body text-center">
-                              <h4 class="h4 mb-0 mt-3">{{ $show->staff_name??''}}</h4>
-                              <p class="card-text">{{ $show->staff_qualification??''}}</p>
+                           <div class="card-body">
+                        @foreach($leaveType as $leave)
+                        <tr>
+                        <td>Leave Type: - {{ $leave->LeaveType['name']}}</td> </br>
+                        <td>Credit Period: - {{ $leave->credit_period }}</td>  </br>
+                        <td>Credit Limit: - {{ $leave->credit_limit}}</td>  </br>
+                        </tr> 
+                        </br>
+                        @endforeach
+
+
                            </div>
                         </div>
                      </li>
@@ -163,10 +153,17 @@
                   <ul class="widget-users row">
                   <li class="col-lg-4  col-md-6 col-sm-12 col-12">
                      <div class="card">
-                        <div class="card-body text-center">
-                           <h4 class="h5 mb-0 mt-3">{{ $show->salaryType->salary_type ?? ''}}</h4>
-                           <p class="card-text">₹{{ $show->salary_amount ?? ''}}</p>
-                        </div>
+                     <div class="card-body">
+                           
+                    @foreach($salaryHead as $salary)
+                    <tr>
+                        <td>Salary Head: - {{ $salary->SalaryHead['salary_head_name']}}</td> </br>
+                        <td>Salary Type: - {{ $salary->salary_head_type }}</td>  </br>
+                        <td>Salary Amount: - {{ $salary->amount}}</td>  </br>
+                        </tr> 
+                        </br>
+                        @endforeach
+                    </div>
                      </div>
                   </li>
                   {{-- 

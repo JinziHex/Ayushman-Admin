@@ -32,5 +32,16 @@ class Mst_Branch extends Model
        
         'deleted_by' => false,
     ];
+
+    public function medicines()
+    {
+        return $this->hasMany(Mst_Medicine::class, 'branch_id'); // Assuming branch_id is the foreign key in Mst_Medicine
+    }
+    
+    public function pharma()
+    {
+        return $this->hasMany(Mst_Pharmacy::class, 'branch_id','branch'); // Assuming branch_id is the foreign key in Mst_Medicine
+    }
+    
     
 }

@@ -58,7 +58,8 @@
 								<h2 class="package-title">{{ $package_details->package_title }}</h2>
 								<ul class="package-info">
 									<li><strong>Duration:</strong> {{ $package_details->package_duration }} days</li>
-									<li><strong>Price:</strong> {{ $package_details->package_price }}</li>
+									<li><strong>Package Price:</strong> {{ $package_details->package_price }}</li>
+									<li><strong>Package Offer Price:</strong> {{ $package_details->package_discount_price }}</li>
 									<li><strong>Status:</strong>
 										@if(isset($package_details->is_active) && $package_details->is_active == 1)
 										<span class="badge badge-success">Active</span>
@@ -107,8 +108,9 @@
 													<p class="card-text">
 														<strong>Duration:</strong> {{ $wellness->wellness_duration }}<br>
 														<strong>Maximum Usage Limit:</strong> {{ $wellness->maximum_usage_limit }}<br>
-														<strong>Wellness Inclusions:</strong> {{ $wellness->wellness_inclusions }}<br>
-														<!-- <strong>Wellness staus:</strong> {{ isset($wellness->is_active) && $wellness->is_active == 1 ? 'Active' : 'Inactive' }} -->
+														<strong>Wellness Inclusions:</strong> {!! $wellness->wellness_inclusions !!}<br>
+														<strong>Wellness Price:</strong> {{ $wellness->wellness_cost }} <br> 
+														<strong>Wellness Offer Price:</strong> {{ $wellness->offer_price }} <br> 
 													</p>
 												</div>
 											</div>
@@ -124,9 +126,10 @@
 								<div class="media-heading">
 									<div class="container">
 										<div class="row">
-											<div class="col-lg-6 mb-3">
+											
+											   <p>Benefits:</p>
 													{!! $benefits->title !!}
-											</div>
+										
 										</div>
 									</div>
 								</div>

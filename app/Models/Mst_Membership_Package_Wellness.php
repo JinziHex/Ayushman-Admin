@@ -19,4 +19,10 @@ class Mst_Membership_Package_Wellness extends Model
         'updated_by',
         'deleted_by',
     ];
+    
+    public function wellness()
+    {
+      return $this->belongsTo(Mst_Wellness::class,'wellness_id','wellness_id');
+    }
+
 }

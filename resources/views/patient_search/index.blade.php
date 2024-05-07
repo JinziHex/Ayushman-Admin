@@ -12,18 +12,19 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <label for="pat-code">Patient Code:</label>
-                            <input type="text" id="pat-code" name="pat_code" class="form-control" value="{{ request('pat_code') }}">
+                            <label for="pat-code">Patient Code</label>
+                            <input type="text" id="pat-code" name="pat_code" class="form-control" value="{{ request('pat_code') }}" placeholder="Patient Code">
                         </div>
                         <div class="col-md-4">
-                            <label for="pat-name">Patient Name:</label>
-                            <input type="text" id="pat-name" name="pat_name" class="form-control" value="{{ request('pat_name') }}">
+                            <label for="pat-name">Patient Name</label>
+                            <input type="text" id="pat-name" name="pat_name" class="form-control" value="{{ request('pat_name') }}" placeholder="Patient Name">
                         </div>
                          <div class="col-md-4">
-                            <label for="pat-mobile">Patient Mobile:</label>
-                            <input type="text" id="pat-mobile" name="pat_mobile" class="form-control" value="{{ request('pat_mobile') }}">
+                            <label for="pat-mobile">Patient Mobile</label>
+                            <input type="text" id="pat-mobile" name="pat_mobile" class="form-control" value="{{ request('pat_mobile') }}" placeholder="Patient Mobile Number" oninput="restrictCharacters(this)">
+
                         </div>
-                        
+                        </div>
                         <div class="col-md-4 d-flex align-items-center">
                             <div>
                                 <button type="submit" class="btn btn-secondary"><i class="fa fa-filter" aria-hidden="true"></i> Filter</button>
@@ -31,7 +32,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+               
             </form>
         </div>
 
@@ -65,9 +66,11 @@
                                 <td>{{ $patient->patient_mobile}}</td>
                                 <td>
                                 
-                                    <a class="btn btn-secondary" href="{{ route('patient_search.show',$patient->id) }}">
-                                        <i class="fa fa-eye" aria-hidden="true"></i> View
-                                    </a>
+                    <a class="btn btn-secondary" href="{{ route('patient_search.show', $patient->id) }}">
+    <i class="fa fa-eye" aria-hidden="true"></i> View
+</a>
+
+                                    
                                 </td>
                             </tr>
                             @endforeach
@@ -79,3 +82,23 @@
     </div>
 </div>
 @endsection
+@section('js')
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+function restrictCharacters(input) {
+    input.value = input.value.replace(/[^\d]/g, ''); // Remove all non-numeric characters
+    
+      if (input.value.length > 10) {
+        input.value = input.value.slice(0, 10);
+    }
+}
+
+</script>

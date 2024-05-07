@@ -13,15 +13,28 @@ class Trn_Consultation_Booking extends Model
     protected $fillable = [
         'booking_reference_number',
         'booking_type_id',
+        'staff_timeslot_id',
         'patient_id',
         'doctor_id',
+        'is_billable',
+        'is_paid',
+        'booking_status_id',
+        'family_member_id',
+        'is_for_family_member',
+        'time_slot_id',
+        'branch_id',
+        'booking_date',
+        'booking_fee',
+        'payable_amount',
+        'is_membership_available'
 
     ];
 
 
     public function bookingType()
     {
-        return $this->belongsTo(Sys_Booking_Type::class, 'booking_type_id', 'booking_type_id');
+        // return $this->belongsTo(Sys_Booking_Type::class, 'booking_type_id', 'booking_type_id');
+        return $this->belongsTo(Mst_Master_Value::class,'booking_type_id','id');
     }
 
     public function patient()
@@ -31,7 +44,7 @@ class Trn_Consultation_Booking extends Model
     
     public function doctor()
     {
-        return $this->belongsTo(Mst_User::class, 'doctor_id', 'id');
+        return $this->belongsTo(Mst_Staff::class, 'doctor_id', 'staff_id');
     }
 
     public function branch()
@@ -43,10 +56,16 @@ class Trn_Consultation_Booking extends Model
     {
         return $this->belongsTo(Mst_TimeSlot::class, 'time_slot_id', 'id');
     }
+    
+    public function staffTimeslot()
+    {
+        return $this->belongsTo(Mst_Staff_Timeslot::class, 'staff_timeslot_id', 'id');
+    }
 
     public function bookingStatus()
     {
-        return $this->belongsTo(Sys_Booking_Status::class, 'booking_status_id', 'id');
+        // return $this->belongsTo(Mst_Master_Value::class, 'booking_status_id', 'id');
+        return $this->belongsTo(Mst_Master_Value::class,'booking_status_id','id');
     }
 
     public function availability()
@@ -72,5 +91,20 @@ class Trn_Consultation_Booking extends Model
     public function familyMember()
     {
         return $this->belongsTo(Trn_Patient_Family_Member::class, 'family_member_id', 'id');
+    }
+    
+    public function therapyBookings()
+    {
+        return $this->hasMany(Trn_Booking_Therapy_detail::class, 'booking_id','id');
+    }
+    
+    public function wellnessBookings()
+    {
+        return $this->hasMany(Trn_Booking_Wellness_Detail::class, 'booking_id', 'id');
+    }
+    
+    public function precriptions()
+    {
+        return $this->hasMany(Trn_Prescription::class, 'booking_id','Booking_Id');
     }
 }

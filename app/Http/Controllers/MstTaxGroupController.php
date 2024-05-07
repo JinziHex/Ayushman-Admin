@@ -18,22 +18,30 @@ class MstTaxGroupController extends Controller
         try {
             $pageTitle = "Tax Groups";
             $taxes = [];
-            $tax_groups = Mst_Tax_Group::get();
+            $tax_groups = Mst_Tax_Group::orderBy('created_at', 'desc')->get();
             foreach ($tax_groups as $tax) {
-                $included_tax_ids = Mst_Tax_Group_Included_Taxes::where('tax_group_id', $tax->id)->pluck('included_tax')->toArray();
-                $rate = Mst_Tax::whereIn('id', $included_tax_ids)->pluck('tax_rate')->toArray();
-                $rateSum = array_sum($rate);
+                $included_tax_ids = Mst_Tax_Group_Included_Taxes::where('tax_group_id', $tax->id)->orderBy('created_at', 'desc')->pluck('included_tax')->toArray();
+                $rate = Mst_Tax::whereIn('id', $included_tax_ids)->orderBy('created_at', 'desc')->pluck('tax_rate','tax_name')->toArray();
+                  $cgstAndSgstRates = array_filter($rate, function ($taxName) {
+                        return strpos(strtoupper($taxName), 'CGST') !== false || strpos(strtoupper($taxName), 'SGST') !== false;
+                    }, ARRAY_FILTER_USE_KEY);
+                    $totalTaxRate = array_sum($cgstAndSgstRates);
+
+                
+                $rateSum = $totalTaxRate;
                 $taxes[] = [
                     'id' => $tax->id,
                     'tax_group_name' => $tax->tax_group_name,
                     'rate' => $rateSum,
                 ];
             }
+            
             return view('tax-group.index', compact('pageTitle', 'taxes'));
         } catch (QueryException $e) {
             return redirect()->route('home')->with('error', $e->getMessage());
         }
     }
+
 
     public function create()
     {

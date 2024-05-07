@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Mst_Medicine extends Model
 {
@@ -13,6 +13,7 @@ class Mst_Medicine extends Model
 
 
     protected $fillable = [
+        'medicine_code',
         'medicine_name',
         'generic_name',
         'item_type',
@@ -26,7 +27,8 @@ class Mst_Medicine extends Model
         'is_active',
         'reorder_limit',
         'created_by',
-        'deleted_at',
+        'updated_by',
+        'deleted_by',
     ];
 
     
@@ -38,7 +40,7 @@ class Mst_Medicine extends Model
     
     public function tax()
     {
-        return $this->belongsTo(Mst_Tax::class, 'tax_id', 'id');
+        return $this->belongsTo(Mst_Tax_Group::class, 'tax_id', 'id');
     }
     public function unit()
     {
@@ -64,5 +66,11 @@ class Mst_Medicine extends Model
     {
         return $this->belongsTo(Mst_Master_Value::class,'manufacturer','id');
     }
+
+    public function stockTransfers()
+    {
+        return $this->hasMany(MstStockTransferTherapy::class, 'medicine_id');
+    }
+
 
 }

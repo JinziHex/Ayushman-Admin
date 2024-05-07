@@ -27,6 +27,7 @@
                         <th class="wd-15p">SL.NO</th>
                         <th class="wd-15p">Account Sub Group Name</th>
                         <th class="wd-15p">Status</th>
+                        <th class="wd-15p">Is System</th>
                         <th class="wd-15p">Action</th>
                     </tr>
                 </thead>
@@ -39,19 +40,32 @@
                         <td>{{ ++$i }}</td>
                         <td>{{ $account_sub_group->account_sub_group_name }}</td>
                         <td>
-                            <button type="button" onclick="changeStatus({{ $account_sub_group->id }})" class="btn btn-sm @if($account_sub_group->is_active == 0) btn-danger @else btn-success @endif">
+                            <button type="button" style="width: 70px;"  onclick="changeStatus({{ $account_sub_group->id }})" class="btn btn-sm @if($account_sub_group->is_active == 0) btn-danger @else btn-success @endif">
                                 @if($account_sub_group->is_active == 0)
-                                InActive
+                                Inactive
                                 @else
                                 Active
                                 @endif
                             </button>
                         </td>
                         <td>
+                            <button type="button" style="width: 70px;">
+                                @if($account_sub_group->is_system == 0)
+                                No
+                                @else
+                                Yes
+                                @endif
+                            </button>
+                        </td>
+                        <td>
+                             @if($account_sub_group->is_system == 0)
                             <a class="btn btn-secondary" href="{{ route('account.sub.group.edit', $account_sub_group->id) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit </a>
                             <button type="button" onclick="deleteData({{ $account_sub_group->id }})" class="btn btn-danger">
                                 <i class="fa fa-trash" aria-hidden="true"></i> Delete
                             </button>
+                            @else
+                            System Defined
+                            @endif
                         </td>
                     </tr>
                     @endforeach
@@ -102,7 +116,7 @@
                             }
                         },
                         error: function() {
-                            alert('An error occurred while deleting the qualification.');
+                            alert('An error occurred while deleting the sub-group.');
                         },
                     });
                 } else {
@@ -136,9 +150,9 @@
                                 var cell = $('#dataRow_' + dataId).find('td:eq(2)');
 
                                 if (cell.find('.btn-success').length) {
-                                    cell.html('<button type="button" onclick="changeStatus(' + dataId + ')" class="btn btn-sm btn-danger">Inactive</button>');
+                                    cell.html('<button type="button" style="width: 70px;"  onclick="changeStatus(' + dataId + ')" class="btn btn-sm btn-danger">Inactive</button>');
                                 } else {
-                                    cell.html('<button type="button" onclick="changeStatus(' + dataId + ')" class="btn btn-sm btn-success">Active</button>');
+                                    cell.html('<button type="button" style="width: 70px;"  onclick="changeStatus(' + dataId + ')" class="btn btn-sm btn-success">Active</button>');
                                 }
 
                                 flashMessage('s', 'Status changed successfully');
@@ -147,7 +161,7 @@
                             }
                         },
                         error: function() {
-                            alert('An error occurred while changing the qualification status.');
+                            alert('An error occurred while changing the sub-group status.');
                         },
                     });
                 }

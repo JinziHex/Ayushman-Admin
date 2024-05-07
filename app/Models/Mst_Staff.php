@@ -16,6 +16,7 @@ class Mst_Staff extends Model
 
 
     protected $fillable = [
+        'staff_id',
         'staff_type',
         'employment_type',
         'staff_username',
@@ -36,9 +37,10 @@ class Mst_Staff extends Model
         'staff_booking_fee',
         'staff_specialization',
         'max_discount_value',
-        'salary_type',
-        'salary_amount',
+        'access_card_number',
+        'is_resigned',
         'deleted_at',
+        'date_of_join'
     ];
 
 
@@ -84,6 +86,21 @@ class Mst_Staff extends Model
     public function users()
     {
     return $this->hasMany(Mst_User::class, 'staff_id', 'staff_id');
+    }
+
+    public function employeeAvailableLeave()
+    {
+        return $this->belongsTo(EmployeeAvailableLeave::class, 'staff_id', 'staff_id');
+    }
+
+    public function leaveConfig()
+    {
+        return $this->hasOne(Mst_Leave_Config::class, 'staff_id', 'staff_id');
+    }
+    
+    public function pharmacies()
+    {
+        return $this->belongsToMany('App\Models\Mst_Pharmacy', 'staff_pharmacy_mapping', 'staff_id', 'pharmacy');
     }
 
 }

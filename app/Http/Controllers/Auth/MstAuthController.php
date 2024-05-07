@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use App\Models\Mst_User;
 use Illuminate\Support\Facades\Validator;
@@ -17,6 +18,113 @@ class MstAuthController extends Controller
     {
         return view('auth.login');
     }
+    
+    public function showPharmacyLoginForm()
+    {
+        return view('auth.pharmacy.login');
+    }
+    
+     public function showReceptionistLoginForm()
+    {
+        return view('auth.receptionist.login');
+    }
+    
+     public function showDoctorLoginForm()
+    {
+        return view('auth.doctor.login');
+    }
+    
+    public function showAccountantLoginForm()
+    {
+        return view('auth.accountant.login');
+    }
+
+    public function Accountantlogin(Request $request)
+    {
+        $credentials = $request->only('username', 'password');
+
+
+        if (Auth::guard('mst_users_guard')->attempt($credentials)) {
+             $user = Auth::guard('mst_users_guard')->user();
+                $user->last_login_time = now();
+                $user->save();
+            if ($user->user_type_id == 21) {
+                return redirect()->intended('/accountant-home');
+            } else {
+                Auth::guard('mst_users_guard')->logout();
+            return back()->withInput()->withErrors(['login' => 'Invalid Accountant User Credentials']);
+            }
+        } else {
+            // Authentication failed
+            return back()->withInput()->withErrors(['login' => 'Invalid credentials']);
+        }
+    }
+
+    public function Doctorlogin(Request $request)
+    {
+        $credentials = $request->only('username', 'password');
+
+
+        if (Auth::guard('mst_users_guard')->attempt($credentials)) {
+             $user = Auth::guard('mst_users_guard')->user();
+                $user->last_login_time = now();
+                $user->save();
+            if ($user->user_type_id == 20) {
+                return redirect()->intended('/doctor-home');
+            } else {
+                Auth::guard('mst_users_guard')->logout();
+            return back()->withInput()->withErrors(['login' => 'Invalid Doctor User Credentials']);
+            }
+        } else {
+            // Authentication failed
+            return back()->withInput()->withErrors(['login' => 'Invalid credentials']);
+        }
+    }
+
+    public function Receptionistlogin(Request $request)
+    {
+        $credentials = $request->only('username', 'password');
+
+
+        if (Auth::guard('mst_users_guard')->attempt($credentials)) {
+             $user = Auth::guard('mst_users_guard')->user();
+                $user->last_login_time = now();
+                $user->save();
+            if ($user->user_type_id == 18) {
+                return redirect()->intended('/reception-home');
+            } else {
+                Auth::guard('mst_users_guard')->logout();
+            return back()->withInput()->withErrors(['login' => 'Invalid Receptionist User Credentials']);
+            }
+        } else {
+            // Authentication failed
+            return back()->withInput()->withErrors(['login' => 'Invalid credentials']);
+        }
+    }
+    
+    
+    public function Pharmacylogin(Request $request)
+    {
+        $credentials = $request->only('username', 'password');
+
+
+        if (Auth::guard('mst_users_guard')->attempt($credentials)) {
+             $user = Auth::guard('mst_users_guard')->user();
+             $user->last_login_time = now();
+             $user->save();
+            if ($user->user_type_id == 96) {
+                return redirect()->intended('/pharmacy-home');
+            } else {
+                Auth::guard('mst_users_guard')->logout();
+            return back()->withInput()->withErrors(['login' => 'Invalid Pharmacy User Credentials']);
+            }
+        } else {
+            // Authentication failed
+            return back()->withInput()->withErrors(['login' => 'Invalid credentials']);
+        }
+    }
+    
+    
 
     // Process the login form
     public function login(Request $request)
@@ -25,8 +133,15 @@ class MstAuthController extends Controller
 
 
         if (Auth::guard('mst_users_guard')->attempt($credentials)) {
-            // Authentication successful
-            return redirect()->intended('/home'); // Replace '/dashboard' with your desired destination
+             $user = Auth::guard('mst_users_guard')->user();
+             $user->last_login_time = now();
+             $user->save();
+            if ($user->user_type_id == 1) {
+                return redirect()->intended('/home');
+            } else {
+                Auth::guard('mst_users_guard')->logout();
+            return back()->withInput()->withErrors(['login' => 'Invalid Admin User Credentials']);
+            }
         } else {
             // Authentication failed
             return back()->withInput()->withErrors(['login' => 'Invalid credentials']);
@@ -36,8 +151,28 @@ class MstAuthController extends Controller
     // Log the user out
     public function logout()
     {
-        Auth::guard('mst_users_guard')->logout();
-        return redirect('/login'); // Redirect to the login page
+       
+        $user = Auth::guard('mst_users_guard')->user();
+       
+       if ($user && $user->user_type_id == 1) {
+            Session::flush();
+            Auth::guard('mst_users_guard')->logout();
+            return redirect('/admin');
+        } elseif ($user && $user->user_type_id == 96) {
+            Auth::guard('mst_users_guard')->logout();
+            return redirect('/pharmacy');
+        } elseif ($user && $user->user_type_id == 18) {
+            Auth::guard('mst_users_guard')->logout();
+            return redirect('/reception');
+        } elseif ($user && $user->user_type_id == 20) {
+            Auth::guard('mst_users_guard')->logout();
+            return redirect('/doctor');
+        } elseif ($user && $user->user_type_id == 21) {
+            Auth::guard('mst_users_guard')->logout();
+            return redirect('/accountant');
+        } else {
+            return redirect('/admin');
+        }
     }
 
     public function verificationRequest()
@@ -62,7 +197,9 @@ class MstAuthController extends Controller
 
             if (!$validator->fails()) {
                 $user = Mst_User::where('user_email', $request->user_email_address)->where('is_active', 1)->first();
+                dd($user);
                 if (!$user) {
+                    
                     return redirect()->route('verification.request')->with('verification', 'User does not exist.');
                 }
                 return view('auth.reset_password');

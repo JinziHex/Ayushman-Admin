@@ -3095,7 +3095,7 @@ body.fixed-header .page {
 
 .table td {
 	padding: 0.75rem;
-	vertical-align: top;
+	/*vertical-align: middle;*/
 }
 
 .border {
@@ -3613,7 +3613,7 @@ body.fixed-header .page {
 
 .form-control:disabled,
 .form-control[readonly] {
-	background-color: #fff;
+	background-color: #e9ecef;
 	opacity: 1;
 }
 
@@ -9594,7 +9594,7 @@ button.close {
 	/* border-radius: 7px; */
 	position: relative;
 	min-height: 50px;
-	padding: 20px;
+	padding: 5px 10px;
 	background: #fff;
 	box-shadow: 0 8px 24px #e5e4e6;
 	border: 1px solid transparent;
@@ -25577,13 +25577,13 @@ ul.side-menu li {
 
 .side-menu__item,
 .slide.is-expanded a {
-	color: #efefef !important;
-	color: grey !important;
+	/*color: #efefef !important;*/
+	color: #000 !important;
 }
 
 .side-menu .side-menu__icon {
-	color: #efefef !important;
-	color: #68798b !important;
+	/*color: #efefef !important;*/
+    color: #000 !important;
 }
 
 .side-menu__item.active,
@@ -25926,7 +25926,7 @@ button.btn.btn-sm.btn-success:hover{
 }
 
 .btn:not(:disabled):not(.disabled) {
-	padding: 4.5px 10px;
+	/*padding: 4.5px 10px;*/
 	
 	margin-top: -2px;
 }
@@ -25963,7 +25963,7 @@ button.btn.btn-sm.btn-danger:hover{
 }
 
 #example tr td {
-	vertical-align: middle;
+	/*vertical-align: middle;*/
 }
 
 .btn-info {
@@ -26250,7 +26250,7 @@ border-color: #3cb35a!important;
 color: #fff!important;
 }
 .fa-eye:before {
-    color: #fff!important;
+    /*color: #fff!important;*/
 }
 .btn-secondary {
     background: rgb(48 209 88)!important;
@@ -26282,4 +26282,150 @@ color: #fff!important;
 	margin-bottom: 0 !important;
 
 }
+.btn:not(:disabled):not(.disabled) {
+    padding: 0 10px;
+    margin-top: 0;
+    border-radius: 5px;
+    font-size: 12px;
+}
+.btn.btn-block{
+        padding: 3px 10px!important;
+}
+button.btn.btn-sm.btn-success {
+    padding: 4px 14px;
+}
+button.btn.btn-sm.btn-danger {
+    padding: 4px 14px;
+}
+.btn.btn-primary.btn-sm.edit-custom{
+    padding: 4px 14px!important;
+}
+.btn.btn-secondary.btn-sm{
+    padding: 4px 14px!important;
+}
+.form-check {
+    text-indent: 5px;
+}
+.btn.btn-danger{
+     font-size:10px;
+}
+.btn-secondary {
+    margin-right: 0;
+}
+select{
+    font-size:12px!important;
+}
+input{
+    font-size:12px!important;
+}
+select::placeholder{
+    font-size:12px!important;
+}
+input::placeholder{
+    font-size:12px!important;
+}
+textarea{
+    font-size:12px!important;
+}
+.btn.btn-sm.btn-outline-success{
+    padding: 4px 14px!important; 
+} 
+table tr td{
+    font-size:12px!important;
+}
+span{
+    font-size:12px!important;
+}
+.btn.btn-primary.btn-sm{
+      padding: 4px 14px!important;
+}
+.side-menu__label {
+    font-size: 14px!important;
+}
+.slide ul.slide-menu li a{
+      font-size: 14px!important;
+}
+.breadcrumb-item.active {
+    color: #2cc92b !important;
+}
+.user-info .text-muted {
+    font-size: 18px!important;
+}
+
+.ShowFilterBox{
+	display:none !important;
+}
+button.btn.btn-blue.displayfilter {
+    padding: 5px 20px !important;
+    margin-bottom: 15px;
+}
+
+.slide{
+	padding-bottom: 15px!important;
+}
+.slide i{
+	font-size: 20px!important;
+	margin-right: 8px!important;
+}
+
+.ayushman-home-main {
+  position: relative;
+}
+.top-img {
+  position: absolute;
+  width: 180px;
+  right: 0;
+  z-index: -1;
+}
+.top-img2 {
+  position: absolute;
+  width: 180px;
+  left: 0;
+  z-index: -1;
+  bottom: 0;
+}
+.ayushman-home-main {
+  height: auto;
+}
+.logo img {
+  width: 200px;
+  margin: auto;
+  display: block;
+  padding: 100px 0 50px;
+}
+.home-buttons button {
+  border: 0;
+  background: linear-gradient(180deg, #3ba733 0%, #23832e 100%);
+  width: 100%;
+  border-radius: 30px;
+  opacity: 0px;
+  padding: 20px 0;
+  outline: 0;
+  height: 140px;
+  margin-bottom: 30px;
+
+}
+.home-buttons button:hover{
+    outline: 0;
+}
+.home-buttons button img {
+  width: 40px;
+  padding-bottom: 10px;
+  object-fit: contain;
+}
+.home-buttons button span {
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.6;
+  text-align: center;
+  color: #fff;
+
+}
+@media (max-width: 991px) { 
+    .top-img2{
+        display: none;
+    }
+ }
+
 /* End */

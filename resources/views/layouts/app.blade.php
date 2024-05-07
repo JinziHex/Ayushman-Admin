@@ -14,7 +14,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{asset('assets/images/ayushman-logo.jpeg')}}" />
 
     <!-- TITLE -->
-    <title>Ayushman Ayurveda - </title>
+    <title>Ayushman Ayurveda</title>
      <!-- DATA TABLE CSS --> 
 		<link href="{{('assets/plugins/datatable/dataTables.bootstrap4.min.css" rel="stylesheet')}}"/>
     <!-- BOOTSTRAP CSS -->
@@ -64,12 +64,38 @@
 
 
    
-    {{-- <link href="{{asset('assets/plugins/select2/select2.full.min.js')}}" rel="stylesheet" />
-    <link href="{{asset('assets/plugins/select2/select2.min.css')}}" rel="stylesheet" />
-    <link href="{{asset('assets/plugins/multipleselect/multi-select.js')}}" rel="stylesheet" />
-    <link href="{{asset('assets/plugins/multipleselect/multiple-select.css')}}" rel="stylesheet" />
-    <link href="{{asset('assets/plugins/multipleselect/multiple-select.js')}}" rel="stylesheet" /> --}}
     @yield('css')
+    
+        <style>
+        .leave_request_table a{
+            display: inline-block;
+            vertical-align: top;
+            margin-top: 0!important;
+            margin-right: 0;
+        }
+        .leave_request_table form{
+            display: inline-block;
+            vertical-align: top;
+            margin-bottom: 0;
+        }
+        .leave_request_table form button{
+            padding-top: 4.5px;
+            padding-bottom: 4.5px;
+            border: 1px solid #000;
+        }
+        .page input[type=text]::placeholder{
+            color:#000;
+        }
+        .page input[type=text]::-ms-input-placeholder{
+            color:#000;
+        }
+        textarea.form-control::placeholder{
+            color:#000;
+        }
+        textarea.form-control::-ms-input-placeholder{
+            color:#000;
+        }
+    </style>
    
 </head>
 
@@ -187,6 +213,13 @@
     {{--@include('admin.common.message')--}}
     <script src="{{asset('assets/plugins/multipleselect/multiple-select.js')}}"></script>
     <script src="{{asset('assets/plugins/multipleselect/multi-select.js')}}"></script>
+    
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
 
 
     <script>
@@ -224,6 +257,49 @@
             return false;
         });
     </script>
+    <script>
+        $(document).ready(function() {
+            $(".displayfilter").click(function() {
+                $('.displaycard').toggleClass("ShowFilterBox");
+                $(this).find('span').text(function(i, text) {
+                    return text === "Show Filters" ? "Hide Filters" : "Show Filters";
+                });
+            });
+        });
+
+    </script>
+<?php 
+use App\Models\Mst_Pharmacy;
+$pharmacyList = Mst_Pharmacy::where('status','=',1)->orderBy('pharmacy_name','ASC')->get();
+?>
+    @if(!Session::has('pharmacy_id') && count($pharmacyList) > 0)
+<script>
+	$(document).ready(function() {
+		$('#pharmacyModal').modal({ backdrop: 'static', keyboard: false }).modal('show');
+	});
+</script>
+@endif
+<script>
+    $(document).ready(function() {
+        $('#pharmacyForm').submit(function(event) {
+            event.preventDefault(); 
+            var formData = $(this).serialize(); 
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+					console.log("success");
+                    window.location.reload(); 
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    });
+</script>
+    
     @yield('js')
 </body>
 

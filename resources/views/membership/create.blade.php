@@ -1,8 +1,18 @@
 @extends('layouts.app')
 @section('content')
-<div class="container">
-<link rel="stylesheet" type="text/css" href="{{ asset('plugins/date-picker/spectrum.css') }}">
-<script src="{{ asset('js/form-elements.js') }}"></script>
+
+   <link rel="stylesheet" type="text/css" href="{{ asset('plugins/date-picker/spectrum.css') }}">
+   <script src="{{ asset('js/form-elements.js') }}"></script>
+<style>
+    textarea#benefitsEditor {
+     visibility: visible !important; 
+    display: block !important;
+    height: 5px;
+    padding: 0 !important;
+        opacity: 0;
+    border: unset !important;
+}
+</style>
 
    <div class="row" style="min-height: 70vh;">
       <div class="col-md-12">
@@ -28,7 +38,7 @@
                <h3 class="mb-0 card-title">Create Membership Packages</h3>
             </div>
             <div class="col-lg-12" style="background-color:#fff">
-               <form action="{{ route('membership.store') }}" method="POST" enctype="multipart/form-data">
+               <form action="{{ route('membership.store') }}" method="POST" enctype="multipart/form-data"  onsubmit="return validateForm()">
                   <input type="hidden" id="checking_benefits" value="{{ isset($benefits) ? 1 : 0 }}">
                   @csrf
                   @if(isset($membership)) @method('PUT') @endif
@@ -44,44 +54,48 @@
                         <div class="col-md-6">
                            <div class="form-group">
                               <label class="form-label">Membership Package Duration(Days)*</label>
-                              <input type="number" class="form-control" required name="membership_package_duration" value="{{ old('package_duration') }}" placeholder="Membership Package Duration">
+                              <input type="number" min="0" class="form-control" required name="membership_package_duration" value="{{ old('membership_package_duration') }}" placeholder="Membership Package Duration(Days)">
                            </div>
                         </div>
 
                         <div class="col-md-6">
                            <div class="form-group">
                               <label class="form-label">Regular Price*</label>
-                              <input type="number" class="form-control" required name="membership_package_price" value="{{ old('package_price') }}" placeholder="Membership Package Price">
-                           </div>
-                        </div>
+                            <input type="text" id="regularPrice" class="form-control" required name="membership_package_price" value="{{ old('package_price') }}" pattern="\d+(\.\d{2})?" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1')" placeholder="Regular Price">
 
 
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label class="form-label">Offer Price*</label>
-                              <input type="number" class="form-control" required name="discount_price" value="{{ old('package_discount_price') }}" placeholder="Discount Price">
                            </div>
                         </div>
 
                         <div class="col-md-6">
                            <div class="form-group">
-                              <label class="form-label">Gradient start*</label>
-                              <input type="text" class="form-control colorPicker" name="gradient_start" placeholder="Regular Price Color">
+                              <label class="form-label">Offer Price</label>
+                                <input type="text" id="offerPrice" class="form-control" name="discount_price" pattern="\d+(\.\d{0,2})?" oninput="this.value = this.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');" value="{{ old('package_discount_price') }}" placeholder="Offer Price" oninput="validatePrices()">
+
+                              <span id="priceError" style="color: red;"></span>
                            </div>
                         </div>
-
-                        <div class="col-md-6">
-                           <div class="form-group">
-                              <label class="form-label">Gradient end*</label>
-                              <input type="text" class="form-control colorPicker" name="gradient_end" placeholder="Offer Price Color">
-                           </div>
-                        </div>
-
 
                         <div class="col-md-11">
                            <div class="form-group">
                               <label class="form-label">Membership Package Description</label>
-                              <textarea class="form-control ckeditor" id="benefitsDescription" name="membership_package_description" placeholder="Membership Package Description">{{ old('package_description') }}</textarea>
+                              <textarea class="form-control " id="benefitsDescription" name="membership_package_description" placeholder="Membership Package Description">{{ old('package_description') }}</textarea>
+                              <span
+                           </div>
+                        </div>
+
+                        <div class="row wizard-title" style="margin-left:0;margin-right:0;">
+                           <h6 class="mb-0 card-title" style="margin-left:15px;">Include Wellness</h6>
+                        </div>
+                        <div class="col-md-12">
+                           <div class="container" id="include_wellness" style="padding-left:0;padding-right:0;"></div>
+                        </div>
+
+                        <div class="col-md-12">
+                           <h6 class="mb-0 card-title" style="margin-left:15px;">Package Benefits*</h6><br>
+                           <div class="form-group">
+                              <textarea class="form-control " required id="benefitsEditor" name="benefits" placeholder="Membership Package Benefits"  >{{ old('package_description') }}</textarea>
+                              <span style="color: red;">*Please provide benefits using bullet points only.</span>
                            </div>
                         </div>
 
@@ -98,29 +112,10 @@
                            </div>
                         </div>
 
-
-                        <div class="row wizard-title" style="margin-left:0;margin-right:0;">
-                           <h6 class="mb-0 card-title" style="margin-left:15px;">Include Wellness</h6>
-                        </div>
-                        <div class="col-md-12">
-                           <div class="container" id="include_wellness" style="padding-left:0;padding-right:0;"></div>
-                        </div>
-                        <!-- 
-                        <div class="row wizard-title" style="margin-left:0;margin-right:0;">
-                           <h6 class="mb-0 card-title" style="margin-left:15px;">Package Benefits</h6>
-                        </div> -->
-                        <div class="col-md-12">
-                           <h6 class="mb-0 card-title" style="margin-left:15px;">Package Benefits</h6><br>
-                           <div class="form-group">
-                              <textarea class="form-control ckeditor" id="benefitsEditor" name="benefits" placeholder="Membership Package Benefits">{{ old('package_description') }}</textarea>
-                           </div>
-                        </div>
-
-
                         <div class="col-md-12">
                            <div class="form-group">
                               <center>
-                                 <button type="submit" class="btn btn-raised btn-primary btn-small-margin"><i class="fa fa-check-square-o"></i> Add</button>
+                                 <button type="submit" class="btn btn-raised btn-primary btn-small-margin reSubmit"><i class="fa fa-check-square-o"></i> Add</button>
                                  <button type="reset" id="reset" class="btn btn-raised btn-success btn-small-margin">Reset</button>
                                  <a class="btn btn-danger btn-small-margin" href="{{ route('membership.index') }}">Cancel</a>
                               </center>
@@ -134,7 +129,7 @@
          </div>
       </div>
    </div>
-</div>
+
 @endsection
 
 
@@ -143,44 +138,51 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js"></script>
 
 <script type="text/javascript">
-   $(document).ready(function() {
-      $(".colorPicker").spectrum({
-            preferredFormat: "hex",
-            showInput: true,
-            showPalette: true,
-            palette: ["#ff0000", "#00ff00", "#0000ff"] // Example palette
-         });
+  document.getElementById('offerPrice').addEventListener('input', validatePrices);
 
-      CKEDITOR.replace('benefitsDescription', {
-         removePlugins: 'image',
-         toolbar: [{
-               name: 'basicstyles',
-               items: ['Bold', 'Italic', 'Underline']
-            },
-            {
-               name: 'paragraph',
-               items: ['BulletedList']
-            },
-         ]
-      });
+function validatePrices() {
+    var regularPrice = parseFloat(document.getElementById('regularPrice').value);
+    var offerPrice = parseFloat(document.getElementById('offerPrice').value);
+    var priceError = document.getElementById('priceError');
+
+    if (offerPrice > regularPrice) {
+        priceError.textContent = "Offer Price cannot be greater than Regular Price.";
+        document.getElementById('offerPrice').value = '';
+    } else {
+        priceError.textContent = "";
+    }
+}
+   $(document).ready(function() {
+
+      var editfield = CKEDITOR.replace('benefitsDescription');
+      
+       editfield.setData("{{ old('editfield') }}");
 
       // Initialize the color pickers
-      
+   
 
 
-      CKEDITOR.replace('benefitsEditor', {
-         toolbar: []
-      });
-
-
-
+      var editor= CKEDITOR.replace('benefitsEditor');
+      document.getElementById('benefitsEditor').setAttribute('required', 'required');
+        
+        editor.on('change', function(event) {
+            $('#benefitsEditor').removeAttr('required');
+        });
+        editor.setData("{{ old('editor') }}");
+        
       $('#reset').click(function() {
          CKEDITOR.instances.benefitsEditor.setData('');
          CKEDITOR.instances.benefitsDescription.setData('');
       });
 
+   
+        
+        
+
+
       // Initial render of wellness form
       renderForm();
+       //$('textarea[name="benefits"]').prop("required", true);
 
       // Add Wellness button click event
       $('#add-wellness').click(function() {
@@ -201,7 +203,7 @@
       });
 
       // Initial render of package benefits form
-      benefitsForm();
+     // benefitsForm();
 
       // Add Package Benefits button click event
       $(document).on('click', '.add-benefits-btn', function() {
@@ -220,20 +222,30 @@
 
    // Render wellness form fields
    function renderForm() {
+       var selectedValues = [];
+        $("select[name^='wellness_id[]']").each(function(){
+            var selectedValue = $(this).val();
+            selectedValues.push(selectedValue);
+        });
+       console.log(selectedValues);
+       
       var data = '';
       data += '<div class="row">';
       data += '<div class="col-md-6 col-sm-offset-1">';
       data += '<div class="form-group label-floating">';
-      data += '<label class="form-label">Select wellness</label>';
-      data += '<select name="wellness_id[]" class="form-control" required>';
+      data += '<label class="form-label">Select wellness*</label>';
+      data += '<select required name="wellness_id[]" class="form-control" required>';
       data += '<option disabled selected value="">Select wellness</option>'; // Add the first option
       @foreach($wellnesses as $wellness)
-      data += '<option value="{{ $wellness->wellness_id }}" data-duration="{{ $wellness->wellness_duration >= 60 ? ($wellness->wellness_duration / 60) . " hour" : $wellness->wellness_duration . " minutes" }}" data-cost="{{ $wellness->wellness_cost  . " ₹" }}">{{ $wellness->wellness_name }}</option>';
+      //var disabled = ($.inArray('{{ $wellness->wellness_id }}', selectedValues) !== -1) ? 'disabled' : '';
+       if ($.inArray('{{ $wellness->wellness_id }}', selectedValues) === -1) {
+      data += '<option value="{{ $wellness->wellness_id }}" data-duration="{{ $wellness->wellness_duration >= 60 ? ($wellness->wellness_duration / 60) . " hour" : $wellness->wellness_duration . " minutes" }}" data-cost="{{" ₹ ". $wellness->wellness_cost }}">{{ $wellness->wellness_name }}</option>';
+       }
       @endforeach
       data += '</select>';
       data += "<label class='form-label'>Duration: <span class='selected_duration'></span>, Cost: <span class='selected_cost'></span></label>";
       data += '</div></div>';
-      data += "<div class='col-md-5'><div class='form-group label-floating'><label class='form-label'>Max limit</label><input type='number' name='max_limit[]' class='form-control dob' required></div></div>";
+      data += "<div class='col-md-5'><div class='form-group label-floating'><label class='form-label'>Max limit*</label><input min='1' required type='number' name='max_limit[]' class='form-control dob' required></div></div>";
       data += "<div style='align-self:center;' class='col-md-1 remove_field add-btn'><a href='javascript:void(0);'><span class='glyphicon glyphicon-plus' style='color:green;'></span></a></div>";
       data += "</div>";
 
@@ -246,8 +258,33 @@
          var cost = selectedOption.data('cost');
          $(this).closest('.row').find('.selected_duration').text(duration);
          $(this).closest('.row').find('.selected_cost').text(cost);
+         
+         
+         
       });
+      
+      
+      
+      
    }
+  // $("select[name='wellness_id[]']").on('click', function() {
+       $(document).on('click', 'select[name="wellness_id[]"]', function() {
+       //alert("test")
+        var selectedValues = [];
+        var clickedValue = $(this).val();
+        $("select[name='wellness_id[]']").not(this).each(function(){
+            var selectedValue = $(this).val();
+            selectedValues.push(selectedValue);
+        });
+        console.log("tessssssst"+selectedValues)
+         if ($(this).find('option').length > 2) {
+             $(this).find('option').each(function() {
+                if ($.inArray($(this).val(), selectedValues) !== -1) {
+                    $(this).remove();
+                }
+            });
+        }
+    });
 
    function toggleStatus(checkbox) {
       if (checkbox.checked) {
@@ -258,6 +295,18 @@
          $('[name="membership_package_active"]').val(0);
       }
    }
+  function validateForm() {
+        var isEmpty = true;
+       var editor =  CKEDITOR.instances.benefitsEditor
+
+        var content = editor.getData().trim();
+        if (!content) {
+          $('#benefitsEditor').attr('required', 'required');
+            editor.focus();
+        }
+        return isEmpty
+        
+    }
 
    // Rest of your JavaScript code...
 </script>

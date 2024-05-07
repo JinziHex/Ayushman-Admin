@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+use App\Models\Mst_Pharmacy;
+@endphp
 <div class="row">
     <div class="col-md-12 col-lg-12">
         <div class="card">
@@ -35,14 +38,35 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="from_branch" class="form-label"> From Branch</label>
-                                <select required class="form-control" name="from_branch" id="from_branch" onchange="loadEmployees()">
-                                    <option value="">Choose Branch</option>
-                                    @foreach($branch as $id => $branchName)
-                                    <option value="{{ $id }}" {{ old('branch_id') == $id ? 'selected' : '' }}>
-                                        {{ $branchName }}
-                                    </option>
-                                    @endforeach
-                                </select>
+                                @if(optional(Auth::user()->staff->branch)->branch_id && Auth::user()->user_type_id != 1)
+                                     <select required class="form-control" name="from_branch" id="from_branch" onchange="loadEmployees()" readonly="">
+                                            <option value="{{ Auth::user()->staff->branch->branch_id }}" selected>
+                                                {{ Auth::user()->staff->branch->branch_name }}
+                                            </option>
+                                        </select>
+                                    
+                                    @elseif (session()->has('pharmacy_id') && session()->has('pharmacy_name') && session('pharmacy_id') != "all")
+                                        @php
+                                        $pharmacy_id = session('pharmacy_id');
+                                        $pharmacy = Mst_Pharmacy::with('branch')->find($pharmacy_id);
+                                        $branch_id = $pharmacy->branch;
+                                        $branch_name = $pharmacy->branchmain->branch_name;
+                                        @endphp
+                                        <select required class="form-control" name="from_branch" id="from_branch" onchange="loadEmployees()" readonly="">
+                                            <option value="{{ $branch_id }}" selected="">
+                                                {{ $branch_name }}
+                                            </option>
+                                        </select>
+                                        @else
+                                        <select required class="form-control" name="from_branch" id="from_branch" onchange="loadEmployees()">
+                                            <option value="">Choose Branch</option>
+                                            @foreach($branch as $id => $branchName)
+                                            <option value="{{ $id }}" {{ old('branch_id') == $id ? 'selected' : '' }}>
+                                                {{ $branchName }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    @endif
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -116,13 +140,19 @@
                 $("#employee_list").empty();
                 // Append the fetched employees to the list
                 $.each(data, function(index, employee) {
-                    console.log(employee);
-                    var checkbox = $('<input type="checkbox" name="coming_staff_id[]" onclick="valEmployee.call(this)" class="chck_btn get-staff-val" style="display:inline;">')
-                        .data('staff_id', employee.staff_id);
-                    var label = $('<label class="ng-binding" style="display:inline;">').text(employee.staff_name);
-                    var row = $('<tr>').append($('<td>').append(checkbox, label));
-                    $("#employee_list").append(row);
-                });
+    console.log(employee);
+    
+    var checkbox = $('<input type="checkbox" name="coming_staff_id[]" onclick="valEmployee.call(this)" class="chck_btn get-staff-val" style="display:inline;">')
+        .data('staff_id', employee.staff_id);
+    
+    var label = $('<label class="ng-binding" style="display:inline;">').text(employee.staff_name);
+    
+    // Add a non-breaking space (&nbsp;) between checkbox and label
+    var row = $('<tr>').append($('<td>').append(checkbox, '&nbsp;&nbsp;', label));
+    
+    $("#employee_list").append(row);
+});
+
             },
             error: function(xhr, textStatus, errorThrown) {
                 console.log(xhr.responseText);
@@ -155,7 +185,7 @@
             var label = $('<label class="ng-binding" style="display:inline;">').text(employee.label);
             var hiddenInput = $('<input type="hidden" name="transfered_staff_id[]">').val(employee.id);
 
-            var row = $('<tr>').append($('<td>').append(checkbox, label, hiddenInput));
+            var row = $('<tr>').append($('<td>').append(checkbox,'&nbsp;&nbsp;', label, hiddenInput));
             $("#transferred_employee_list").append(row);
         });
     }
@@ -179,7 +209,7 @@
                 .data('staff_id', employeeRow.find('input[type=checkbox]').data('staff_id')); // Retrieve staff_id from data attribute
             // var hiddenInput = $('<input type="hidden" name="transfered_staff_id">').val(employee.id);
             var label = $('<label class="ng-binding" style="display:inline;">').text(employeeRow.find('label').text());
-            var row = $('<tr>').append($('<td>').append(checkbox, label));
+            var row = $('<tr>').append($('<td>').append(checkbox,'&nbsp;&nbsp;', label));
             $("#employee_list").append(row);
             // Remove the selected employee row from the "Transferred Employees" container
             employeeRow.remove();
